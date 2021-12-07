@@ -1,2 +1,2 @@
 # tests
-Just checking in my tests i create to prove how something works
+Just checking in my tests i create to prove how things work
