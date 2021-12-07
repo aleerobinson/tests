@@ -22,50 +22,59 @@ delete from transaction_test;
  */
 
 const transaction_test = {
-    options: {
-        timestamps: false,
-        tableName: 'transaction_test'
+  options: {
+    timestamps: false,
+    tableName: 'transaction_test',
+  },
+  definition: {
+    ['id']: {
+      allowNull: true,
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: false,
     },
-    definition: {
-        ['id']: {
-            allowNull: true,
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: false,
-        },
-        ['name']: {
-            allowNull: true,
-            type: Sequelize.STRING(20),
-        },
+    ['name']: {
+      allowNull: true,
+      type: Sequelize.STRING(20),
     },
+  },
 };
 
 const models = {
-    transaction_test,
-}
+  transaction_test,
+};
 
 const runQuery = async () => {
-    const sequelize = await getSequelize('mssql', models);
+  const sequelize = await getSequelize('mssql', models);
 
-    return sequelize.transaction(async (transaction) => {
-        const max = await sequelize.models.transaction_test.max('id', {transaction, lock: transaction.LOCK});
-        const newMax = max + 1;
-        const newName = `New-${newMax}`;
-        return sequelize.models.transaction_test.create({id: newMax, name: newName}, {transaction, lock: transaction.LOCK});
-    })
+  return sequelize.transaction(async (transaction) => {
+    const max = await sequelize.models.transaction_test.max('id', {
+      transaction,
+      lock: transaction.LOCK,
+    });
+    const newMax = max + 1;
+    const newName = `New-${newMax}`;
+    return sequelize.models.transaction_test.create(
+      {id: newMax, name: newName},
+      {
+        transaction,
+        lock: transaction.LOCK,
+      }
+    );
+  });
 };
 
 const run = async () => {
-    const size = 100;
-    const promises = new Array(size).fill(null).map(() => runQuery());
-    return Promise.all(promises);
+  const size = 100;
+  const promises = new Array(size).fill(null).map(() => runQuery());
+  return Promise.all(promises);
 };
 
 (async () => {
-    try {
-        const res = await run();
-        console.log('res', res);
-    } catch (err) {
-        console.log(err);
-    }
+  try {
+    const res = await run();
+    console.log('res', res);
+  } catch (err) {
+    console.log(err);
+  }
 })();
