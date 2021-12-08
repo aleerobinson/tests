@@ -25,7 +25,7 @@ const runQuery = async (i) => {
 
   const query = `
      INSERT transaction_test (id, name)
-     SELECT MAX(id) + 1, 'blah' FROM transaction_test WITH (UPDLOCK);
+     SELECT MAX(id) + 1, :value FROM transaction_test WITH (UPDLOCK);
   `;
 
   const replacements = {value: `name-${i}`};
